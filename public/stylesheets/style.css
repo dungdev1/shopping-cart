@@ -6,3 +6,31 @@ body {
 a {
   color: #00B7FF;
 }
+
+.thumbnail {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.thumbnail img {
+  max-height: 150px;
+  display: block;
+  margin: auto;
+}
+
+.thumbnail .purchase{
+}
+
+.thumbnail .price {
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: .5rem;
+}
+
+.thumbnail .description {
+  color: rgb(0, 0, 0, 0.5);
+}
+
+.navbar {
+  margin-bottom: 30px;
+}
