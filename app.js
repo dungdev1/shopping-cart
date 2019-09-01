@@ -5,6 +5,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var exphbs  = require('express-handlebars');
+const mongoose = require('mongoose');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -12,6 +13,7 @@ var usersRouter = require('./routes/users');
 // Instantiations
 var app = express();
 
+mongoose.connect('mongodb://localhost:27017/shopping-cart', {useNewUrlParser: true});
 // Configuration
 // view engine setup
 app.engine('.hbs', exphbs({extname: '.hbs', defaultLayout: 'layout'}));   // tells Express that for files with extension ".hbs" you would like to call the expressHbs() to render them

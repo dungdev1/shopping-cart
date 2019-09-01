@@ -1,10 +1,18 @@
 var express = require('express');
 var router = express.Router();
+const Product = require('../models/product');
 
 /* GET home page. */
 // This will render index.hbs into views/layouts/layout.hbs
 router.get('/', function(req, res, next) {
-  res.render('./shop/index', { title: 'Shopping cart' });
+  Product.find(function(err, docs) {
+    let productChunks = [];
+    let chunkSize = 3;
+    for (let i = 0; i < docs.length; i += chunkSize) {
+      productChunks.push(docs.slice(i, i + chunkSize));
+    }
+    res.render('./shop/index', { title: 'Shopping cart', products: productChunks });
+  });
 });
 
 module.exports = router;
