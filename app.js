@@ -6,9 +6,9 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var exphbs  = require('express-handlebars');
 const mongoose = require('mongoose');
+const session = require('express-session');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 
 // Instantiations
 var app = express();
@@ -25,10 +25,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({secret: 'mysupersecret', resave: false, saveUninitialized: false }));
 
 // Routes
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 
 // Error handlers
 // catch 404 and forward to error handler
