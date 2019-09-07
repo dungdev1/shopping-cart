@@ -7,6 +7,8 @@ var logger = require('morgan');
 var exphbs  = require('express-handlebars');
 const mongoose = require('mongoose');
 const session = require('express-session');
+const passport = require('passport');
+const flash = require('connect-flash');
 
 var indexRouter = require('./routes/index');
 
@@ -14,6 +16,8 @@ var indexRouter = require('./routes/index');
 var app = express();
 
 mongoose.connect('mongodb://localhost:27017/shopping-cart', {useNewUrlParser: true});
+require('./config/passport');
+
 // Configuration
 // view engine setup
 app.engine('.hbs', exphbs({extname: '.hbs', defaultLayout: 'layout'}));   // tells Express that for files with extension ".hbs" you would like to call the expressHbs() to render them
@@ -26,8 +30,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({secret: 'mysupersecret', resave: false, saveUninitialized: false }));
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
 
-// Routes
+// use Routes
 app.use('/', indexRouter);
 
 // Error handlers

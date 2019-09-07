@@ -1,8 +1,9 @@
 var express = require('express');
-var router = express.Router();
-const Product = require('../models/product');
+var router = express.Router();      //modular, mountable route handlers, it is complete middleware and routing system, as "mini-app"
 const csrf = require('csurf');
+const passport = require('passport');
 
+const Product = require('../models/product');
 const csrfProtection = csrf();
 router.use(csrfProtection);
 
@@ -20,11 +21,13 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/user/signup', function(req, res, next) {
-  res.render('user/signup', {csrfToken: req.csrfToken()});
+  let messages = req.flash('error');
+  res.render('user/signup', {csrfToken: req.csrfToken(), messages: messages, hasErrors: messages.length > 0});
 });
 
-router.post('/user/signup', function(req, res, next) {
-  res.redirect('/');
-})
+router.post('/user/signup', passport.authenticate('local.signup', { successRedirect: '/user/profile', failureRedirect: '/user/signup', failureFlash: true}));
 
+router.get('/user/profile', function(req, res, next) {
+  res.render('user/profile');
+})
 module.exports = router;
