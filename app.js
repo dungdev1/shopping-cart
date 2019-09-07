@@ -12,6 +12,7 @@ const flash = require('connect-flash');
 const validator = require('express-validator');
 
 var indexRouter = require('./routes/index');
+var userRouter = require('./routes/user');
 
 // Instantiations
 var app = express();
@@ -35,7 +36,13 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(function(req, res, next) {
+  res.locals.login = req.isAuthenticated();
+  next();
+})
+
 // use Routes
+app.use('/user', userRouter);
 app.use('/', indexRouter);
 
 // Error handlers
