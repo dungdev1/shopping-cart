@@ -30,3 +30,16 @@ passport.use('local.signup', new LocalStratery({
   })
 }
 ));
+
+passport.use('local.signin', new LocalStratery({
+  usernameField: 'email',
+  passwordField: 'password',
+  passReqToCallback: true
+}, function(req, email, password, done) {
+  User.findOne({email: email}, function(err, user) {
+    if (err) return done(err);
+    if (!user) return done(null, false, {message: 'No user found.'});
+    if (!user.validPassword(password)) return done(null, false, {message: 'Password not match'});
+    return done(null, user);
+  })
+}))

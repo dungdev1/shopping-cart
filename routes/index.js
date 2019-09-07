@@ -38,8 +38,6 @@ router.get('/user/signup', function (req, res, next) {
   });
 });
 
-router.post('', )
-
 router.post('/user/signup', [
     check('email').not().isEmpty().withMessage('Invalid email'),
     check('password').not().isEmpty().withMessage('Invalid password'),
@@ -64,5 +62,36 @@ router.post('/user/signup', [
 
 router.get('/user/profile', function (req, res, next) {
   res.render('user/profile');
-})
+});
+
+router.get('/user/signin', function(req, res, next) {
+  let messages = req.flash('error');
+  res.render('user/signin', {
+    csrfToken: req.csrfToken(),
+    messages: messages,
+    hasErrors: messages.length > 0
+  });
+});
+
+router.post('/user/signin', [
+  check('email').not().isEmpty().withMessage('Invalid email'),
+  check('password').not().isEmpty().withMessage('Invalid password')
+], (req, res, next) => {
+  const errors = validationResult(req).array();
+    if (errors.length > 0) {
+      let messages = [];
+      errors.forEach(error => {
+        messages.push(error.msg);
+      });
+      req.flash('error', messages);
+      return res.redirect('/user/signin');
+    }
+    next();
+}, passport.authenticate('local.signin', {
+  successRedirect: '/',
+  failureRedirect: '/user/signin',
+  failureFlash: true
+}));
+
+
 module.exports = router;

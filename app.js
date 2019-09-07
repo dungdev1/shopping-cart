@@ -16,10 +16,10 @@ var indexRouter = require('./routes/index');
 // Instantiations
 var app = express();
 
+// Configuration
 mongoose.connect('mongodb://localhost:27017/shopping-cart', {useNewUrlParser: true});
 require('./config/passport');
 
-// Configuration
 // view engine setup
 app.engine('.hbs', exphbs({extname: '.hbs', defaultLayout: 'layout'}));   // tells Express that for files with extension ".hbs" you would like to call the expressHbs() to render them
 app.set('view engine', '.hbs');      // tells Express which template engine to use
