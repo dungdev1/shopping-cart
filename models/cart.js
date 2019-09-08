@@ -15,4 +15,12 @@ module.exports = class Cart {
     this.totalPrice += storedItem.itemInfor.price;
     this.totalQty++;
   };
+
+  generateArray() {
+    let arr = [];
+    for (let id in this.items) {
+      arr.push(this.items[id]);
+    }
+    return arr;
+  }
 }
