@@ -7,8 +7,8 @@ const {
   validationResult
 } = require('express-validator');
 
-const csrfProtection = csrf();
-router.use(csrfProtection);
+const csrfProtection = csrf();    // 
+router.use(csrfProtection);   // route middleware
 
 var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
 

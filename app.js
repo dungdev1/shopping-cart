@@ -2,14 +2,13 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
-var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var exphbs  = require('express-handlebars');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const passport = require('passport');
 const flash = require('connect-flash');
-const validator = require('express-validator');
+const MongoStore = require('connect-mongo')(session);
 
 var indexRouter = require('./routes/index');
 var userRouter = require('./routes/user');
@@ -18,7 +17,7 @@ var userRouter = require('./routes/user');
 var app = express();
 
 // Configuration
-mongoose.connect('mongodb://localhost:27017/shopping-cart', {useNewUrlParser: true});
+const connection = mongoose.connect('mongodb://localhost:27017/shopping-cart', {useNewUrlParser: true});
 require('./config/passport');
 
 // view engine setup
@@ -29,15 +28,21 @@ app.set('view engine', '.hbs');      // tells Express which template engine to u
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({secret: 'mysupersecret', resave: false, saveUninitialized: false }));
+app.use(session({
+  secret: 'mysupersecret',
+  resave: false,
+  saveUninitialized: false,
+  store: new MongoStore({ mongooseConnection: connection}),
+  cookie: {maxAge: 180 * 60 * 1000}
+ }));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(function(req, res, next) {
   res.locals.login = req.isAuthenticated();
+  res.locals.session = req.session;
   next();
 })
 
