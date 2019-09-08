@@ -17,7 +17,7 @@ var userRouter = require('./routes/user');
 var app = express();
 
 // Configuration
-const connection = mongoose.connect('mongodb://localhost:27017/shopping-cart', {useNewUrlParser: true});
+mongoose.connect('mongodb://localhost:27017/shopping-cart', {useNewUrlParser: true});
 require('./config/passport');
 
 // view engine setup
@@ -33,7 +33,7 @@ app.use(session({
   secret: 'mysupersecret',
   resave: false,
   saveUninitialized: false,
-  store: new MongoStore({ mongooseConnection: connection}),
+  store: new MongoStore({ mongooseConnection: mongoose.connection}),
   cookie: {maxAge: 180 * 60 * 1000}
  }));
 app.use(flash());
