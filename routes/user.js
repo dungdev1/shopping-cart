@@ -2,6 +2,9 @@ var express = require('express');
 var router = express.Router(); //modular, mountable route handlers, it is complete middleware and routing system, as "mini-app"
 const csrf = require('csurf');
 const passport = require('passport');
+const Order = require('../models/order');
+const Cart = require('../models/cart');
+
 const {
   check,
   validationResult
@@ -13,7 +16,17 @@ router.use(csrfProtection);   // route middleware
 var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
 
 router.get('/profile', isLoggedIn, function (req, res, next) {
-  res.render('user/profile');
+  Order.find({user: req.user}, function(err, orders) {
+    if (err) {
+      return res.write('Error');
+    }
+    let cart = null;
+    orders.forEach(order => {
+      cart = new Cart(order.cart);
+      order.cart.items = cart.generateArray();
+    });
+    res.render('user/profile', {orders: orders});
+  })
 });
 
 router.get('/logout', function(req, res, next) {
@@ -52,10 +65,17 @@ router.post('/signup', [
     next();
   },
   passport.authenticate('local.signup', {
-    successRedirect: '/user/profile',
     failureRedirect: '/user/signup',
     failureFlash: true
-  }));
+  }), function(req, res, next) {
+    if (req.session.oldUrl) {
+      let oldUrl = req.session.oldUrl;
+      req.session.oldUrl = null;
+      res.redirect(oldUrl);
+    } else {
+      res.redirect('/user/profile');
+    }
+  });
 
 router.get('/signin', function(req, res, next) {
   let messages = req.flash('error');
@@ -81,10 +101,18 @@ router.post('/signin', [
     }
     next();
 }, passport.authenticate('local.signin', {
-  successRedirect: '/',
   failureRedirect: '/user/signin',
   failureFlash: true
-}));
+}), function(req, res, next) {
+  console.log(req.session.oldUrl)
+  if (req.session.oldUrl) {
+    let oldUrl = req.session.oldUrl;
+    req.session.oldUrl = null;
+    res.redirect(oldUrl);
+  } else {
+    res.redirect('/user/profile');
+  }
+});
 
 module.exports = router;
 

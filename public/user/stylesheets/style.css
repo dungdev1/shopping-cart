@@ -1,0 +1,13 @@
+.order-body {
+  padding: 15px 15px 40px;
+}
+
+.order {
+  margin-bottom: 30px;
+}
+
+.order-footer{
+  padding: 10px;
+  border-top: none;
+  background-color: #d7d8da;
+}

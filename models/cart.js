@@ -16,6 +16,22 @@ module.exports = class Cart {
     this.totalQty++;
   };
 
+  reduceByOne(id) {
+    this.items[id].quantity--;
+    this.totalQty--;
+    this.items[id].price -= this.items[id].itemInfor.price;
+    this.totalPrice -=this.items[id].itemInfor.price;
+    if (this.items[id].quantity===0) {
+      delete this.items[id];
+    }
+  }
+
+  removeItem(id) {
+    this.totalQty -= this.items[id].quantity;
+    this.totalPrice -= this.items[id].price
+    delete this.items[id];
+  }
+
   generateArray() {
     let arr = [];
     for (let id in this.items) {
